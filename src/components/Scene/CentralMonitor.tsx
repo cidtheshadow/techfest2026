@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Text, useTexture, Html } from '@react-three/drei';
 import { DoubleSide } from 'three';
@@ -10,12 +10,23 @@ interface CentralMonitorProps {
   type: 'home' | 'events' | 'pronites' | 'sponsors';
   position: [number, number, number];
   rotation: [number, number, number];
+  selectedDomain?: string;
+  setSelectedDomain?: (domain: string) => void;
 }
 
-export default function CentralMonitor({ type, position, rotation }: CentralMonitorProps) {
+export default function CentralMonitor({ 
+  type, 
+  position, 
+  rotation,
+  selectedDomain,
+  setSelectedDomain
+}: CentralMonitorProps) {
   const groupRef = useRef<Group>(null);
   const ringRef1 = useRef<Mesh>(null);
   const ringRef2 = useRef<Mesh>(null);
+  
+  // Track hovered state for event items locally for visual feedback
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   // Load techFEST logo texture
   const logoTex = useTexture('/logo.png');
@@ -105,10 +116,10 @@ export default function CentralMonitor({ type, position, rotation }: CentralMoni
             color="rgba(0, 242, 255, 0.5)"
             anchorX="center"
           >
-            /// ACTIVE DOMAINS
+            /// SELECT DOMAIN TO VIEW DETAILS
           </Text>
           
-          {/* Real SLIET domains list */}
+          {/* Clickable real SLIET domains list */}
           {[
             'ROBOZAR',
             'PLEXUS',
@@ -116,17 +127,38 @@ export default function CentralMonitor({ type, position, rotation }: CentralMoni
             'MECHANICA',
             'CHEMICA',
             'GENESIS'
-          ].map((item, idx) => (
-            <Text
-              key={idx}
-              position={[0, -0.45 - idx * 0.22, 0]}
-              fontSize={0.13}
-              color="#ffffff"
-              anchorX="center"
-            >
-              {item}
-            </Text>
-          ))}
+          ].map((item, idx) => {
+            const itemId = item.toLowerCase();
+            const isSelected = selectedDomain === itemId;
+            const isHovered = hoveredItem === itemId;
+            
+            return (
+              <Text
+                key={idx}
+                position={[0, -0.45 - idx * 0.22, 0]}
+                fontSize={0.14}
+                color={isSelected ? '#00f2ff' : isHovered ? '#ffffff' : 'rgba(255, 255, 255, 0.6)'}
+                anchorX="center"
+                onPointerOver={(e) => {
+                  e.stopPropagation();
+                  setHoveredItem(itemId);
+                  document.body.style.cursor = 'pointer';
+                }}
+                onPointerOut={() => {
+                  setHoveredItem(null);
+                  document.body.style.cursor = 'crosshair';
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (setSelectedDomain) {
+                    setSelectedDomain(itemId);
+                  }
+                }}
+              >
+                {isSelected ? `> ${item} <` : `  ${item}  `}
+              </Text>
+            );
+          })}
         </group>
       )}
 
@@ -139,10 +171,9 @@ export default function CentralMonitor({ type, position, rotation }: CentralMoni
             <meshBasicMaterial color="#000000" side={DoubleSide} />
           </mesh>
 
-          {/* Embedded YouTube Player in 3D Space */}
+          {/* Embedded YouTube Player in 3D Space - Removed occlude for guaranteed rendering */}
           <Html
             transform
-            occlude
             distanceFactor={2.4}
             position={[0, 0, 0.03]}
             style={{

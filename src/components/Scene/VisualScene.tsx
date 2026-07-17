@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, useTexture } from '@react-three/drei';
 import { Vector3 } from 'three';
@@ -10,6 +10,8 @@ import PostFX from './PostProcessing';
 
 interface VisualSceneProps {
   activeTab: string;
+  selectedDomain: string;
+  setSelectedDomain: (domain: string) => void;
 }
 
 // Camera transition controller
@@ -20,7 +22,7 @@ function CameraController({ activeTab, controlsRef }: { activeTab: string; contr
   const posTarget = new Vector3();
   const lookTarget = new Vector3();
 
-  if (activeTab === 'home' || activeTab === 'register') {
+  if (activeTab === 'home' || activeTab === 'register' || activeTab === 'faq') {
     posTarget.set(0, 1.6, 1.8);
     lookTarget.set(0, 1.5, -4);
   } else if (activeTab === 'events') {
@@ -48,7 +50,7 @@ function CameraController({ activeTab, controlsRef }: { activeTab: string; contr
   return null;
 }
 
-export default function VisualScene({ activeTab }: VisualSceneProps) {
+export default function VisualScene({ activeTab, selectedDomain, setSelectedDomain }: VisualSceneProps) {
   const controlsRef = useRef<any>(null);
   const bgTexture = useTexture('/warehouse_bg.jpg');
 
@@ -115,10 +117,28 @@ export default function VisualScene({ activeTab }: VisualSceneProps) {
       <CameraController activeTab={activeTab} controlsRef={controlsRef} />
 
       {/* 4 Holographic Monitors positioned around the camera */}
-      <CentralMonitor type="home" position={[0, 1.5, -4]} rotation={[0, 0, 0]} />
-      <CentralMonitor type="events" position={[-4, 1.5, 0]} rotation={[0, Math.PI / 2, 0]} />
-      <CentralMonitor type="pronites" position={[0, 1.5, 4]} rotation={[0, Math.PI, 0]} />
-      <CentralMonitor type="sponsors" position={[4, 1.5, 0]} rotation={[0, -Math.PI / 2, 0]} />
+      <CentralMonitor 
+        type="home" 
+        position={[0, 1.5, -4]} 
+        rotation={[0, 0, 0]} 
+      />
+      <CentralMonitor 
+        type="events" 
+        position={[-4, 1.5, 0]} 
+        rotation={[0, Math.PI / 2, 0]} 
+        selectedDomain={selectedDomain}
+        setSelectedDomain={setSelectedDomain}
+      />
+      <CentralMonitor 
+        type="pronites" 
+        position={[0, 1.5, 4]} 
+        rotation={[0, Math.PI, 0]} 
+      />
+      <CentralMonitor 
+        type="sponsors" 
+        position={[4, 1.5, 0]} 
+        rotation={[0, -Math.PI / 2, 0]} 
+      />
       
       {/* Floating particles throughout the room */}
       <FloatingParticles />

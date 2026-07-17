@@ -8,6 +8,7 @@ import HudFrame from '../components/HUD/HudFrame';
 export default function Home() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('home');
+  const [selectedDomain, setSelectedDomain] = useState('robozar');
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 2000);
@@ -31,12 +32,20 @@ export default function Home() {
           }}
         >
           <Suspense fallback={null}>
-            <VisualScene activeTab={activeTab} />
+            <VisualScene 
+              activeTab={activeTab} 
+              selectedDomain={selectedDomain}
+              setSelectedDomain={setSelectedDomain}
+            />
           </Suspense>
         </Canvas>
       </div>
       <div className="scanlines" />
-      <HudFrame activeTab={activeTab} setActiveTab={setActiveTab} />
+      <HudFrame 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        selectedDomain={selectedDomain}
+      />
     </>
   );
 }

@@ -528,6 +528,57 @@ html, body {
   100% { transform: translateX(400%); }
 }
 
+/* Custom form and interaction styles */
+.hud-form-group {
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.hud-label {
+  display: block;
+  font-size: 0.6rem;
+  color: var(--teal);
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.hud-input {
+  width: 100%;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid var(--border-cyan);
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.hud-input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan-glow);
+}
+
+.hud-select {
+  width: 100%;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid var(--border-cyan);
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  outline: none;
+  cursor: pointer;
+}
+
+.hud-select option {
+  background: var(--midnight);
+  color: #ffffff;
+}
+
 /* ========== MOBILE RESPONSIVENESS ========== */
 @media (max-width: 768px) {
   .hud-frame {
@@ -627,5 +678,3 @@ html, body {
     width: 100%;
   }
 }
-
-

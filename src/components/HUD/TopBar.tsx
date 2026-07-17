@@ -16,9 +16,16 @@ interface TopBarProps {
 export default function TopBar({ activeTab, setActiveTab }: TopBarProps) {
   return (
     <div className="hud-top">
-      {/* Top Left: Status Indicators */}
+      {/* Top Left: Status Indicators & FAQ click */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+        <a 
+          className="hud-top-flank" 
+          onClick={() => setActiveTab('faq')}
+          style={{ cursor: 'pointer', marginRight: '16px' }}
+        >
+          FAQ
+        </a>
+        <div className="hud-side-mobile-hide" style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
           <span style={{ fontSize: '0.55rem', color: 'rgba(0, 242, 255, 0.4)', letterSpacing: '0.1em' }}>SYS // ON_LINE</span>
           <div style={{ display: 'flex', gap: '2px' }}>
             {[...Array(8)].map((_, i) => (
@@ -46,18 +53,27 @@ export default function TopBar({ activeTab, setActiveTab }: TopBarProps) {
         </div>
       </div>
 
-      {/* Top Right: Nav menu */}
-      <div style={{ display: 'flex', gap: '4px' }}>
-        {navLinks.map((link) => (
-          <button
-            key={link.id}
-            className={`hud-nav-link ${activeTab === link.id ? 'active' : ''}`}
-            onClick={() => setActiveTab(link.id)}
-            style={{ border: 'none', padding: '6px 12px', fontSize: '0.65rem' }}
-          >
-            {link.label}
-          </button>
-        ))}
+      {/* Top Right: Nav menu & REGISTRATION link */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+        <div className="hud-nav-buttons" style={{ display: 'flex', gap: '4px' }}>
+          {navLinks.map((link) => (
+            <button
+              key={link.id}
+              className={`hud-nav-link ${activeTab === link.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(link.id)}
+              style={{ border: 'none', padding: '6px 12px', fontSize: '0.65rem' }}
+            >
+              {link.label}
+            </button>
+          ))}
+        </div>
+        <a 
+          className="hud-top-flank hud-side-mobile-hide" 
+          onClick={() => setActiveTab('register')}
+          style={{ cursor: 'pointer' }}
+        >
+          REGISTRATION
+        </a>
       </div>
     </div>
   );
