@@ -10,6 +10,7 @@ import PostFX from './PostProcessing';
 
 interface VisualSceneProps {
   activeTab: string;
+  setActiveTab: (tab: string) => void;
   selectedDomain: string;
   setSelectedDomain: (domain: string) => void;
 }
@@ -50,7 +51,7 @@ function CameraController({ activeTab, controlsRef }: { activeTab: string; contr
   return null;
 }
 
-export default function VisualScene({ activeTab, selectedDomain, setSelectedDomain }: VisualSceneProps) {
+export default function VisualScene({ activeTab, setActiveTab, selectedDomain, setSelectedDomain }: VisualSceneProps) {
   const controlsRef = useRef<any>(null);
   const bgTexture = useTexture('/warehouse_bg.jpg');
 
@@ -121,6 +122,7 @@ export default function VisualScene({ activeTab, selectedDomain, setSelectedDoma
         type="home" 
         position={[0, 1.5, -4]} 
         rotation={[0, 0, 0]} 
+        onClick={() => setActiveTab('home')}
       />
       <CentralMonitor 
         type="events" 
@@ -128,16 +130,19 @@ export default function VisualScene({ activeTab, selectedDomain, setSelectedDoma
         rotation={[0, Math.PI / 2, 0]} 
         selectedDomain={selectedDomain}
         setSelectedDomain={setSelectedDomain}
+        onClick={() => setActiveTab('events')}
       />
       <CentralMonitor 
         type="pronites" 
         position={[0, 1.5, 4]} 
         rotation={[0, Math.PI, 0]} 
+        onClick={() => setActiveTab('pronites')}
       />
       <CentralMonitor 
         type="sponsors" 
         position={[4, 1.5, 0]} 
         rotation={[0, -Math.PI / 2, 0]} 
+        onClick={() => setActiveTab('sponsors')}
       />
       
       {/* Floating particles throughout the room */}

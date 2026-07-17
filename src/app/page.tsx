@@ -34,6 +34,7 @@ export default function Home() {
           <Suspense fallback={null}>
             <VisualScene 
               activeTab={activeTab} 
+              setActiveTab={setActiveTab}
               selectedDomain={selectedDomain}
               setSelectedDomain={setSelectedDomain}
             />

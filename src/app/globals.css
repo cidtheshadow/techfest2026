@@ -1,5 +1,5 @@
 /* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Outfit:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Outfit:wght@400;700;900&family=Syncopate:wght@700&display=swap');
 
 :root {
   --midnight: #020617;
@@ -102,10 +102,11 @@ html, body {
   text-shadow: 0 0 10px var(--cyan-glow);
 }
 
+/* UPDATED WITH KUBO AND SYNCOPATE FALLBACK FONTS */
 .hud-logotype {
-  font-family: var(--font-display);
+  font-family: 'Kubo', 'Syncopate', var(--font-display), sans-serif;
   font-weight: 900;
-  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-size: clamp(1.1rem, 2.3vw, 1.7rem);
   color: var(--cyan);
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -579,6 +580,129 @@ html, body {
   color: #ffffff;
 }
 
+/* ========== HAMBURGER MENU STYLING (NEW) ========== */
+.hud-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 50;
+}
+
+.hud-hamburger .bar {
+  width: 100%;
+  height: 2px;
+  background-color: var(--cyan);
+  transition: all 0.3s ease;
+}
+
+.hud-hamburger .bar.open:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hud-hamburger .bar.open:nth-child(2) {
+  opacity: 0;
+}
+
+.hud-hamburger .bar.open:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Mobile sliding menu overlay */
+.hud-mobile-menu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.96);
+  backdrop-filter: blur(8px);
+  z-index: 48;
+  transition: right 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+.hud-mobile-menu.open {
+  right: 0;
+  pointer-events: auto;
+}
+
+.hud-mobile-menu-inner {
+  width: 280px;
+  height: 100%;
+  border-left: 1px solid var(--border-cyan);
+  background: rgba(2, 6, 23, 0.95);
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hud-mobile-menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 242, 255, 0.2);
+}
+
+.hud-mobile-menu-close {
+  background: transparent;
+  border: none;
+  color: var(--cyan);
+  font-size: 1.2rem;
+  cursor: pointer;
+  font-family: var(--font-mono);
+}
+
+.hud-mobile-menu-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+  flex-grow: 1;
+}
+
+.hud-mobile-menu-link {
+  background: transparent;
+  border: none;
+  color: rgba(0, 242, 255, 0.6);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-align: left;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 1px dashed rgba(0, 242, 255, 0.08);
+}
+
+.hud-mobile-menu-link:hover,
+.hud-mobile-menu-link.active {
+  color: var(--cyan);
+  text-shadow: 0 0 8px var(--cyan-glow);
+  padding-left: 6px;
+}
+
+.hud-mobile-menu-footer {
+  font-size: 0.5rem;
+  color: rgba(0, 242, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(0, 242, 255, 0.15);
+  padding-top: 12px;
+}
+
 /* ========== MOBILE RESPONSIVENESS ========== */
 @media (max-width: 768px) {
   .hud-frame {
@@ -600,31 +724,23 @@ html, body {
   }
 
   .hud-top-flank {
-    font-size: 0.5rem;
-    letter-spacing: 0.1em;
+    display: none !important; /* Hide flanked links in mobile row, use hamburger */
   }
 
   .hud-logotype {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
 
   .hud-nav {
-    overflow-x: auto;
-    justify-content: flex-start;
-    padding: 0 8px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    display: none !important; /* Hide secondary horizontal scroll bar, use hamburger */
   }
 
-  .hud-nav::-webkit-scrollbar {
-    display: none;
+  .hud-hamburger {
+    display: flex;
   }
 
-  .hud-nav-link {
-    font-size: 0.6rem;
-    padding: 10px 16px;
-    white-space: nowrap;
-    border-left: none !important;
+  .hud-side-mobile-hide {
+    display: none !important;
   }
 
   .hud-overlay-left {

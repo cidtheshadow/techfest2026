@@ -12,6 +12,7 @@ interface CentralMonitorProps {
   rotation: [number, number, number];
   selectedDomain?: string;
   setSelectedDomain?: (domain: string) => void;
+  onClick?: () => void;
 }
 
 export default function CentralMonitor({ 
@@ -19,7 +20,8 @@ export default function CentralMonitor({
   position, 
   rotation,
   selectedDomain,
-  setSelectedDomain
+  setSelectedDomain,
+  onClick
 }: CentralMonitorProps) {
   const groupRef = useRef<Group>(null);
   const ringRef1 = useRef<Mesh>(null);
@@ -47,7 +49,19 @@ export default function CentralMonitor({
   return (
     <group ref={groupRef} position={position} rotation={rotation}>
       {/* 3D Holographic Display Background / Glass Plate */}
-      <mesh>
+      <mesh
+        onClick={(e) => {
+          e.stopPropagation();
+          if (onClick) onClick();
+        }}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          document.body.style.cursor = 'pointer';
+        }}
+        onPointerOut={() => {
+          document.body.style.cursor = 'crosshair';
+        }}
+      >
         <planeGeometry args={[4.5, 2.8]} />
         <meshPhysicalMaterial
           color="#00f2ff"

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TopBar from './TopBar';
 import SidePanel from './SidePanel';
 import BottomBar from './BottomBar';
@@ -23,6 +23,14 @@ export default function HudFrame({ activeTab, setActiveTab, selectedDomain }: Hu
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [accessKey, setAccessKey] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Accordion state for events
+  const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
+
+  // Reset selected event when domain or activeTab changes
+  useEffect(() => {
+    setSelectedEvent(null);
+  }, [selectedDomain, activeTab]);
 
   // Handle Form Change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -61,7 +69,6 @@ export default function HudFrame({ activeTab, setActiveTab, selectedDomain }: Hu
       
       if (error) {
         console.error('Supabase DB Insert Error:', error.message);
-        // Note: Even if table is missing, let the user complete flow on frontend
       } else {
         console.log('Enrollment successfully recorded in Supabase!');
       }
@@ -108,6 +115,28 @@ export default function HudFrame({ activeTab, setActiveTab, selectedDomain }: Hu
     }
   };
 
+  // Event details database for accordion interactive cards
+  const eventDetails: Record<string, string> = {
+    'ROBO-WARS (Heavyweight battle)': 'Heavyweight battle robots fighting in a protected arena cage. Expect sparks, pneumatic launchers, dynamic blades, and high impact collisions.',
+    'ROBO-RACE (All-terrain sprint)': 'Race your customized manual or wireless robot rover through wooden bridges, mud pits, ramps, and sand traps in minimal time.',
+    'MAZE SOLVER (Autonomous AI navigation)': 'Design and code an autonomous sensor-based micro-mouse robot that solves a physical grid maze in the fastest time.',
+    'HACKATHON (24-hour product build)': 'A fast-paced 24-hour build sprint. Pitch, build, and prototype a software or hardware utility addressing global sustainability and automation.',
+    'BUG HUNT (Logic and compile debugs)': 'Race against the clock to locate, fix, and optimize syntax and runtime logic bugs in multiple programming languages.',
+    'SPEED CODING (Time trials)': 'Competitive programming challenges testing data structure selection, sorting optimization, and runtime space efficiency.',
+    'IOT CHALLENGE (Smart home prototypes)': 'Develop and build working smart home grids or remote device automation rigs utilizing ESP32, web APIs, and sensors.',
+    'PCB DESIGN (Layout mapping)': 'Design a space-efficient and functional custom printed circuit board layout matching specific current parameters using CAD software.',
+    'DIGILOGIC (Logic gates breadboard)': 'Solve and wire complex logical Boolean circuits on breadboards utilizing fundamental logic gate chips.',
+    'CAD-CADETS (3D mechanical designs)': 'Model mechanical engine parts, gears, and structural joints using CAD tools within strict specifications under time limits.',
+    'SIMULINK (System simulation trials)': 'Simulate industrial workflows, heat exchanges, or mechanical system responses using MATLAB/Simulink trials.',
+    'INVENT-O-MANIA (Hardware designs)': 'Pitch and showcase mechanical and structural design concepts or models to a panel of expert judges.',
+    'CHEM-CAR (Chem-propelled mini vehicle)': 'Build and calibrate a chemistry-propelled miniature vehicle that stops precisely at a defined distance through chemical reactions.',
+    'ALCHEMY (Process simulation)': 'Simulate chemical processes, heat exchange parameters, and separation column efficiencies on standard chemical software.',
+    'REACTOR RUN (Safety protocols)': 'A fast-paced simulation assessment testing handling of emergency safety parameters and thermal loops in reactor plants.',
+    'BRIDGE-IT (Spaghetti structural bridge)': 'Construct a load-bearing miniature truss bridge utilizing spaghetti sticks and hot glue. Strongest weight-to-mass ratio wins.',
+    'KARYARACHNA (Sustainable architecture models)': 'Design and pitch sustainable, zero-emission model layouts for modern eco-friendly housing estates.',
+    'SCI-TECH (Paper presentation)': 'Present original research publications in physics, coding, chemistry, or mechanical engineering to university faculty panels.'
+  };
+
   const activeDomainData = domainInfo[selectedDomain] || domainInfo.robozar;
 
   return (
@@ -144,11 +173,53 @@ export default function HudFrame({ activeTab, setActiveTab, selectedDomain }: Hu
               <h2 className="hud-panel-title">{activeDomainData.title}</h2>
               <p className="hud-panel-desc">{activeDomainData.desc}</p>
               <div className="hud-panel-sub">
-                <h3 className="hud-panel-subtitle">FEATURED EVENTS:</h3>
-                <ul className="hud-panel-list">
-                  {activeDomainData.list.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
+                <h3 className="hud-panel-subtitle" style={{ marginBottom: '8px' }}>
+                  FEATURED EVENTS (CLICK TO SCAN DETAILS):
+                </h3>
+                <ul className="hud-panel-list" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {activeDomainData.list.map((item, idx) => {
+                    const isEventSelected = selectedEvent === item;
+                    return (
+                      <li key={idx} style={{ listStyle: 'none' }}>
+                        <button
+                          onClick={() => setSelectedEvent(isEventSelected ? null : item)}
+                          style={{
+                            background: 'transparent',
+                            border: 'none',
+                            color: isEventSelected ? 'var(--cyan)' : 'rgba(0, 242, 255, 0.65)',
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '0.65rem',
+                            textAlign: 'left',
+                            cursor: 'pointer',
+                            padding: '2px 0',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                            transition: 'color 0.2s ease'
+                          }}
+                        >
+                          {isEventSelected ? `[-] ${item}` : `[+] ${item}`}
+                        </button>
+                        
+                        {isEventSelected && (
+                          <div style={{
+                            marginTop: '6px',
+                            marginBottom: '6px',
+                            padding: '8px 12px',
+                            borderLeft: '2px solid var(--cyan)',
+                            background: 'rgba(0, 242, 255, 0.05)',
+                            fontSize: '0.6rem',
+                            color: '#ffffff',
+                            lineHeight: '1.4',
+                            animation: 'slideIn 0.3s ease-out',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.02em'
+                          }}>
+                            {eventDetails[item] || 'INITIALIZING DETAILS RETRIEVAL PROTOCOL...'}
+                          </div>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             </div>
