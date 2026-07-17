@@ -1,0 +1,234 @@
+'use client';
+
+import { useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { Text, useTexture } from '@react-three/drei';
+import { DoubleSide } from 'three';
+import type { Group, Mesh } from 'three';
+
+interface CentralMonitorProps {
+  type: 'home' | 'events' | 'pronites' | 'sponsors';
+  position: [number, number, number];
+  rotation: [number, number, number];
+}
+
+export default function CentralMonitor({ type, position, rotation }: CentralMonitorProps) {
+  const groupRef = useRef<Group>(null);
+  const ringRef1 = useRef<Mesh>(null);
+  const ringRef2 = useRef<Mesh>(null);
+
+  // Load techFEST logo texture
+  const logoTex = useTexture('/logo.png');
+
+  useFrame(({ clock }) => {
+    if (groupRef.current) {
+      // Gentle floating oscillation
+      groupRef.current.position.y = position[1] + Math.sin(clock.elapsedTime * 0.8 + (type === 'events' ? 1.5 : type === 'pronites' ? 3.0 : 0)) * 0.05;
+    }
+    if (ringRef1.current) {
+      ringRef1.current.rotation.z = clock.elapsedTime * 0.3;
+    }
+    if (ringRef2.current) {
+      ringRef2.current.rotation.z = -clock.elapsedTime * 0.15;
+    }
+  });
+
+  return (
+    <group ref={groupRef} position={position} rotation={rotation}>
+      {/* 3D Holographic Display Background / Glass Plate */}
+      <mesh>
+        <planeGeometry args={[4.5, 2.8]} />
+        <meshPhysicalMaterial
+          color="#00f2ff"
+          transparent
+          opacity={0.08}
+          roughness={0.1}
+          metalness={0.1}
+          transmission={0.6}
+          ior={1.2}
+          side={DoubleSide}
+        />
+      </mesh>
+
+      {/* Outer Cyan Wireframe Border */}
+      <mesh>
+        <planeGeometry args={[4.52, 2.82]} />
+        <meshBasicMaterial color="#00f2ff" wireframe side={DoubleSide} transparent opacity={0.3} />
+      </mesh>
+
+      {/* Screen Glowing Underlight */}
+      <pointLight position={[0, -0.5, 0.2]} intensity={2.5} color="#00f2ff" distance={8} />
+
+      {/* TYPE 1: HOME - Holographic Reticle + Center Logo */}
+      {type === 'home' && (
+        <group>
+          {/* Concentric rotating HUD rings behind/around the logo */}
+          <mesh ref={ringRef1} position={[0, 0, 0.02]}>
+            <ringGeometry args={[0.9, 0.92, 64]} />
+            <meshBasicMaterial color="#00f2ff" transparent opacity={0.35} side={DoubleSide} />
+          </mesh>
+          <mesh ref={ringRef2} position={[0, 0, 0.02]}>
+            <ringGeometry args={[1.05, 1.1, 64, 1, 0, Math.PI * 1.6]} />
+            <meshBasicMaterial color="#00f2ff" transparent opacity={0.5} side={DoubleSide} />
+          </mesh>
+
+          {/* Additional target ticks */}
+          {[0, 90, 180, 270].map((rot, idx) => (
+            <mesh key={idx} position={[0, 0, 0.02]} rotation={[0, 0, (rot * Math.PI) / 180]}>
+              <planeGeometry args={[0.04, 0.25]} />
+              <meshBasicMaterial color="#00f2ff" transparent opacity={0.6} />
+            </mesh>
+          ))}
+
+          {/* Logo Plane */}
+          <mesh position={[0, 0.05, 0.05]}>
+            <planeGeometry args={[2.5, 1.0]} />
+            <meshBasicMaterial map={logoTex} transparent depthWrite={false} />
+          </mesh>
+        </group>
+      )}
+
+      {/* TYPE 2: EVENTS - Monospace Technical Terminals */}
+      {type === 'events' && (
+        <group position={[0, 0.8, 0.05]}>
+          <Text
+            position={[0, 0, 0]}
+            fontSize={0.18}
+            color="#00f2ff"
+            anchorX="center"
+          >
+            EVENTS TERMINAL
+          </Text>
+          <Text
+            position={[0, -0.2, 0]}
+            fontSize={0.12}
+            color="rgba(0, 242, 255, 0.5)"
+            anchorX="center"
+          >
+            /// UPCOMING CHALLENGES
+          </Text>
+          
+          {/* Event items list */}
+          {[
+            'AI CHALLENGE',
+            'ROBOTICS HACKATHON',
+            'SUSTAINABLE ENERGY SYMPOSIUM',
+            'CYBERSECURITY SUMMIT',
+            'QUANTUM COMPUTING WORKSHOP'
+          ].map((item, idx) => (
+            <Text
+              key={idx}
+              position={[0, -0.45 - idx * 0.22, 0]}
+              fontSize={0.13}
+              color="#ffffff"
+              anchorX="center"
+            >
+              {item}
+            </Text>
+          ))}
+        </group>
+      )}
+
+      {/* TYPE 3: PRONITES - Video highlights screen layout */}
+      {type === 'pronites' && (
+        <group>
+          {/* Grid lines layout representing scan lines / camera viewport */}
+          <mesh position={[0, 0, 0.01]}>
+            <planeGeometry args={[4.2, 2.5]} />
+            <meshBasicMaterial color="#020617" transparent opacity={0.6} side={DoubleSide} />
+          </mesh>
+
+          {/* Target Corner brackets inside the screen */}
+          {[
+            [-2.0, 1.15], [2.0, 1.15], [2.0, -1.15], [-2.0, -1.15]
+          ].map(([x, y], idx) => (
+            <group key={idx} position={[x, y, 0.02]}>
+              <mesh position={[x > 0 ? -0.1 : 0.1, 0, 0]}>
+                <planeGeometry args={[0.2, 0.02]} />
+                <meshBasicMaterial color="#00f2ff" />
+              </mesh>
+              <mesh position={[0, y > 0 ? -0.1 : 0.1, 0]}>
+                <planeGeometry args={[0.02, 0.2]} />
+                <meshBasicMaterial color="#00f2ff" />
+              </mesh>
+            </group>
+          ))}
+
+          {/* Camera overlay text */}
+          <Text position={[-1.7, 1.0, 0.03]} fontSize={0.08} color="#00f2ff" anchorX="left">
+            REC [●] 1080p
+          </Text>
+          <Text position={[1.7, 1.0, 0.03]} fontSize={0.08} color="#00f2ff" anchorX="right">
+            CAM_02 // SECURE
+          </Text>
+
+          {/* Center Play Icon Graphic */}
+          <mesh position={[0, 0, 0.03]}>
+            <ringGeometry args={[0, 0.3, 3]} />
+            <meshBasicMaterial color="#00f2ff" transparent opacity={0.8} />
+          </mesh>
+          <mesh position={[0, 0, 0.02]}>
+            <circleGeometry args={[0.45, 32]} />
+            <meshBasicMaterial color="#00f2ff" wireframe transparent opacity={0.5} />
+          </mesh>
+
+          <Text position={[0, -0.6, 0.03]} fontSize={0.12} color="#ffffff" anchorX="center">
+            TECHFEST &apos;25 HIGHLIGHTS REEL
+          </Text>
+
+          {/* Time Bar indicator */}
+          <group position={[0, -1.0, 0.03]}>
+            <mesh position={[0, 0, 0]}>
+              <planeGeometry args={[3.6, 0.04]} />
+              <meshBasicMaterial color="rgba(0, 242, 255, 0.2)" />
+            </mesh>
+            <mesh position={[-1.2, 0, 0.01]}>
+              <planeGeometry args={[1.2, 0.04]} />
+              <meshBasicMaterial color="#00f2ff" />
+            </mesh>
+            <mesh position={[-0.6, 0, 0.02]}>
+              <circleGeometry args={[0.04, 16]} />
+              <meshBasicMaterial color="#ffffff" />
+            </mesh>
+            <Text position={[-1.8, -0.01, 0]} fontSize={0.07} color="#00f2ff" anchorX="right">
+              0:08 / 1:24
+            </Text>
+          </group>
+        </group>
+      )}
+
+      {/* TYPE 4: SPONSORS */}
+      {type === 'sponsors' && (
+        <group position={[0, 0.6, 0.05]}>
+          <Text
+            position={[0, 0, 0]}
+            fontSize={0.18}
+            color="#00f2ff"
+            anchorX="center"
+          >
+            SPONSORS PORTAL
+          </Text>
+          <Text
+            position={[0, -0.2, 0]}
+            fontSize={0.1}
+            color="rgba(0, 242, 255, 0.5)"
+            anchorX="center"
+          >
+            /// INITIALIZING SECURE LINK
+          </Text>
+          
+          <Text
+            position={[0, -0.6, 0]}
+            fontSize={0.13}
+            color="#ffffff"
+            anchorX="center"
+            maxWidth={3.8}
+            textAlign="center"
+          >
+            OFFICIAL CORPORATE SPONSORS LIST RETRIEVING FROM DATABASE...
+          </Text>
+        </group>
+      )}
+    </group>
+  );
+}
