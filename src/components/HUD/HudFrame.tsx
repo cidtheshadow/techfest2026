@@ -20,16 +20,18 @@ export default function HudFrame({ activeTab, setActiveTab }: HudFrameProps) {
         {/* Left Panel */}
         <div className="hud-overlay-left">
           <div className="hud-panel">
-            <h2 className="hud-panel-title">WELCOME TO THE FUTURE OF COMPUTATION</h2>
+            <h2 className="hud-panel-title">WELCOME TO THE MATRIX</h2>
             <p className="hud-panel-desc">
-              Explore the Industrial Cyber-Terminal Portfolio Matrix. Innovation, Engineering, and Technology Converge.
+              techFEST&apos;26 is the ultimate technical and innovation festival of SLIET Longowal. Connect, create, and compete across multiple domains of innovation.
             </p>
             <div className="hud-panel-sub">
-              <h3 className="hud-panel-subtitle">UPCOMING EVENTS:</h3>
+              <h3 className="hud-panel-subtitle">ACTIVE DOMAINS:</h3>
               <ul className="hud-panel-list">
-                <li>AI & ROBOTICS CHALLENGE</li>
-                <li>CYBERSECURITY HACKATHON</li>
-                <li>SUSTAINABLE ENERGY SYMPOSIUM</li>
+                <li>ROBOZAR (Robotics Competitions)</li>
+                <li>PLEXUS (Computing & Coding)</li>
+                <li>GENESIS (Core Engineering Challenges)</li>
+                <li>ELECTRONICA & ELECTRICA</li>
+                <li>MECHANICA & CHEMICA</li>
               </ul>
             </div>
           </div>

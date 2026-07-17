@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Text, useTexture } from '@react-three/drei';
+import { Text, useTexture, Html } from '@react-three/drei';
 import { DoubleSide } from 'three';
 import type { Group, Mesh } from 'three';
 
@@ -88,7 +88,7 @@ export default function CentralMonitor({ type, position, rotation }: CentralMoni
         </group>
       )}
 
-      {/* TYPE 2: EVENTS - Monospace Technical Terminals */}
+      {/* TYPE 2: EVENTS - Monospace Technical Terminals (Updated with SLIET domains) */}
       {type === 'events' && (
         <group position={[0, 0.8, 0.05]}>
           <Text
@@ -105,16 +105,17 @@ export default function CentralMonitor({ type, position, rotation }: CentralMoni
             color="rgba(0, 242, 255, 0.5)"
             anchorX="center"
           >
-            /// UPCOMING CHALLENGES
+            /// ACTIVE DOMAINS
           </Text>
           
-          {/* Event items list */}
+          {/* Real SLIET domains list */}
           {[
-            'AI CHALLENGE',
-            'ROBOTICS HACKATHON',
-            'SUSTAINABLE ENERGY SYMPOSIUM',
-            'CYBERSECURITY SUMMIT',
-            'QUANTUM COMPUTING WORKSHOP'
+            'ROBOZAR',
+            'PLEXUS',
+            'ELECTRONICA',
+            'MECHANICA',
+            'CHEMICA',
+            'GENESIS'
           ].map((item, idx) => (
             <Text
               key={idx}
@@ -129,71 +130,39 @@ export default function CentralMonitor({ type, position, rotation }: CentralMoni
         </group>
       )}
 
-      {/* TYPE 3: PRONITES - Video highlights screen layout */}
+      {/* TYPE 3: PRONITES - Embedded YouTube Video highlights inside 3D screen */}
       {type === 'pronites' && (
         <group>
-          {/* Grid lines layout representing scan lines / camera viewport */}
+          {/* Main monitor screen backing plane */}
           <mesh position={[0, 0, 0.01]}>
             <planeGeometry args={[4.2, 2.5]} />
-            <meshBasicMaterial color="#020617" transparent opacity={0.6} side={DoubleSide} />
+            <meshBasicMaterial color="#000000" side={DoubleSide} />
           </mesh>
 
-          {/* Target Corner brackets inside the screen */}
-          {[
-            [-2.0, 1.15], [2.0, 1.15], [2.0, -1.15], [-2.0, -1.15]
-          ].map(([x, y], idx) => (
-            <group key={idx} position={[x, y, 0.02]}>
-              <mesh position={[x > 0 ? -0.1 : 0.1, 0, 0]}>
-                <planeGeometry args={[0.2, 0.02]} />
-                <meshBasicMaterial color="#00f2ff" />
-              </mesh>
-              <mesh position={[0, y > 0 ? -0.1 : 0.1, 0]}>
-                <planeGeometry args={[0.02, 0.2]} />
-                <meshBasicMaterial color="#00f2ff" />
-              </mesh>
-            </group>
-          ))}
-
-          {/* Camera overlay text */}
-          <Text position={[-1.7, 1.0, 0.03]} fontSize={0.08} color="#00f2ff" anchorX="left">
-            REC [●] 1080p
-          </Text>
-          <Text position={[1.7, 1.0, 0.03]} fontSize={0.08} color="#00f2ff" anchorX="right">
-            CAM_02 // SECURE
-          </Text>
-
-          {/* Center Play Icon Graphic */}
-          <mesh position={[0, 0, 0.03]}>
-            <ringGeometry args={[0, 0.3, 3]} />
-            <meshBasicMaterial color="#00f2ff" transparent opacity={0.8} />
-          </mesh>
-          <mesh position={[0, 0, 0.02]}>
-            <circleGeometry args={[0.45, 32]} />
-            <meshBasicMaterial color="#00f2ff" wireframe transparent opacity={0.5} />
-          </mesh>
-
-          <Text position={[0, -0.6, 0.03]} fontSize={0.12} color="#ffffff" anchorX="center">
-            TECHFEST &apos;25 HIGHLIGHTS REEL
-          </Text>
-
-          {/* Time Bar indicator */}
-          <group position={[0, -1.0, 0.03]}>
-            <mesh position={[0, 0, 0]}>
-              <planeGeometry args={[3.6, 0.04]} />
-              <meshBasicMaterial color="rgba(0, 242, 255, 0.2)" />
-            </mesh>
-            <mesh position={[-1.2, 0, 0.01]}>
-              <planeGeometry args={[1.2, 0.04]} />
-              <meshBasicMaterial color="#00f2ff" />
-            </mesh>
-            <mesh position={[-0.6, 0, 0.02]}>
-              <circleGeometry args={[0.04, 16]} />
-              <meshBasicMaterial color="#ffffff" />
-            </mesh>
-            <Text position={[-1.8, -0.01, 0]} fontSize={0.07} color="#00f2ff" anchorX="right">
-              0:08 / 1:24
-            </Text>
-          </group>
+          {/* Embedded YouTube Player in 3D Space */}
+          <Html
+            transform
+            occlude
+            distanceFactor={2.4}
+            position={[0, 0, 0.03]}
+            style={{
+              width: '640px',
+              height: '360px',
+              border: 'none',
+              background: '#000',
+              boxShadow: '0 0 20px rgba(0, 242, 255, 0.15)'
+            }}
+          >
+            <iframe
+              width="100%"
+              height="100%"
+              src="https://www.youtube.com/embed/D9nvV2lxZgA?autoplay=1&mute=1&loop=1&playlist=D9nvV2lxZgA&controls=1"
+              title="techFEST Highlights"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </Html>
         </group>
       )}
 
