@@ -580,7 +580,7 @@ html, body {
   color: #ffffff;
 }
 
-/* ========== HAMBURGER MENU STYLING (NEW) ========== */
+/* ========== HAMBURGER MENU STYLING ========== */
 .hud-hamburger {
   display: none;
   flex-direction: column;
@@ -724,7 +724,7 @@ html, body {
   }
 
   .hud-top-flank {
-    display: none !important; /* Hide flanked links in mobile row, use hamburger */
+    display: none !important;
   }
 
   .hud-logotype {
@@ -732,7 +732,7 @@ html, body {
   }
 
   .hud-nav {
-    display: none !important; /* Hide secondary horizontal scroll bar, use hamburger */
+    display: none !important;
   }
 
   .hud-hamburger {
@@ -743,12 +743,28 @@ html, body {
     display: none !important;
   }
 
+  /* SLIDES DIALOG BOX DOWNWARDS TO EXPOSE 3D SCREEN UNDER WHICH IT LIVES */
+  .hud-center {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow-y: auto;
+    pointer-events: none;
+    padding-top: 48vh; /* Shifted down from 42vh to ensure completely unblocked 3D screens */
+    padding-bottom: 90px;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .hud-overlay-left {
     position: relative;
     top: auto;
     left: auto;
     width: 90%;
-    margin: 120px auto 0 auto;
+    margin: 0 auto 16px auto;
+    pointer-events: auto;
+    z-index: 42;
   }
 
   .hud-panel {
@@ -765,7 +781,9 @@ html, body {
     right: auto;
     bottom: auto;
     width: 90%;
-    margin: 12px auto 80px auto;
+    margin: 0 auto;
+    pointer-events: auto;
+    z-index: 42;
   }
 
   .hud-status-card {
@@ -774,7 +792,7 @@ html, body {
   }
 
   .hud-info-console {
-    display: none !important; /* Hide console to avoid overlap with 3D canvas on mobile */
+    display: none !important;
   }
 
   .hud-bottom {

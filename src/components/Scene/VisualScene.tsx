@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, useTexture } from '@react-three/drei';
 import { Vector3 } from 'three';
@@ -18,23 +18,34 @@ interface VisualSceneProps {
 // Camera transition controller
 function CameraController({ activeTab, controlsRef }: { activeTab: string; controlsRef: any }) {
   const { camera } = useThree();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Target positions and lookAt vectors based on active tab
   const posTarget = new Vector3();
   const lookTarget = new Vector3();
 
+  // Shift camera heights upward on mobile to center terminals perfectly inside the top transparent half (48vh viewport)
+  const heightOffset = isMobile ? 1.2 : 0;
+
   if (activeTab === 'home' || activeTab === 'register' || activeTab === 'faq') {
-    posTarget.set(0, 1.6, 1.8);
-    lookTarget.set(0, 1.5, -4);
+    posTarget.set(0, 1.6 + heightOffset, 1.8);
+    lookTarget.set(0, 1.5 + heightOffset, -4);
   } else if (activeTab === 'events') {
-    posTarget.set(1.8, 1.6, 0);
-    lookTarget.set(-4, 1.5, 0);
+    posTarget.set(1.8, 1.6 + heightOffset, 0);
+    lookTarget.set(-4, 1.5 + heightOffset, 0);
   } else if (activeTab === 'pronites') {
-    posTarget.set(0, 1.6, -1.8);
-    lookTarget.set(0, 1.5, 4);
+    posTarget.set(0, 1.6 + heightOffset, -1.8);
+    lookTarget.set(0, 1.5 + heightOffset, 4);
   } else if (activeTab === 'sponsors') {
-    posTarget.set(-1.8, 1.6, 0);
-    lookTarget.set(4, 1.5, 0);
+    posTarget.set(-1.8, 1.6 + heightOffset, 0);
+    lookTarget.set(4, 1.5 + heightOffset, 0);
   }
 
   useFrame(() => {
