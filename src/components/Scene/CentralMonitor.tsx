@@ -105,9 +105,9 @@ export default function CentralMonitor({
             </mesh>
           ))}
 
-          {/* Logo Plane */}
+          {/* Logo Plane - Fixed aspect ratio to prevent squashing (1.22:1) */}
           <mesh position={[0, 0.05, 0.05]}>
-            <planeGeometry args={[2.5, 1.0]} />
+            <planeGeometry args={[1.7, 1.39]} />
             <meshBasicMaterial map={logoTex} transparent depthWrite={false} />
           </mesh>
         </group>
