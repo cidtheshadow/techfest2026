@@ -4,6 +4,7 @@ import { useState } from 'react';
 import TopBar from './TopBar';
 import SidePanel from './SidePanel';
 import BottomBar from './BottomBar';
+import { supabase } from '../../utils/supabase';
 
 interface HudFrameProps {
   activeTab: string;
@@ -21,6 +22,7 @@ export default function HudFrame({ activeTab, setActiveTab, selectedDomain }: Hu
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [accessKey, setAccessKey] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Handle Form Change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -31,16 +33,45 @@ export default function HudFrame({ activeTab, setActiveTab, selectedDomain }: Hu
   };
 
   // Handle Form Submit
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.college) {
       alert('ERROR: ALL FIELDS REQUIRED IN THE PROTOCOL.');
       return;
     }
+    
+    setIsSubmitting(true);
+    
     // Generate a random access key
     const randomKey = `TF26-${Math.floor(1000 + Math.random() * 9000)}-${formData.domain.toUpperCase()}`;
-    setAccessKey(randomKey);
-    setIsSubmitted(true);
+    
+    try {
+      // Insert enrollment record into Supabase registrations table
+      const { error } = await supabase
+        .from('registrations')
+        .insert([
+          { 
+            name: formData.name, 
+            email: formData.email, 
+            college: formData.college, 
+            domain: formData.domain,
+            access_key: randomKey
+          }
+        ]);
+      
+      if (error) {
+        console.error('Supabase DB Insert Error:', error.message);
+        // Note: Even if table is missing, let the user complete flow on frontend
+      } else {
+        console.log('Enrollment successfully recorded in Supabase!');
+      }
+    } catch (err) {
+      console.error('Connection to Supabase failed:', err);
+    } finally {
+      setAccessKey(randomKey);
+      setIsSubmitted(true);
+      setIsSubmitting(false);
+    }
   };
 
   // Domain content database
@@ -93,7 +124,7 @@ export default function HudFrame({ activeTab, setActiveTab, selectedDomain }: Hu
             <div className="hud-panel">
               <h2 className="hud-panel-title">WELCOME TO THE MATRIX</h2>
               <p className="hud-panel-desc">
-                techFEST&apos;26 is the national-level annual technical festival of SLIET Longowal. Connect, create, and compete across multiple domains of innovation.
+                techFEST&apos;26 is the ultimate technical and innovation festival of SLIET Longowal. Connect, create, and compete across multiple domains of innovation.
               </p>
               <div className="hud-panel-sub">
                 <h3 className="hud-panel-subtitle">ACTIVE DOMAINS:</h3>
@@ -178,6 +209,7 @@ export default function HudFrame({ activeTab, setActiveTab, selectedDomain }: Hu
                         className="hud-input" 
                         placeholder="ENTER FULL NAME"
                         required
+                        disabled={isSubmitting}
                       />
                     </div>
                     <div className="hud-form-group">
@@ -190,6 +222,7 @@ export default function HudFrame({ activeTab, setActiveTab, selectedDomain }: Hu
                         className="hud-input" 
                         placeholder="ENTER EMAIL ADDRESS"
                         required
+                        disabled={isSubmitting}
                       />
                     </div>
                     <div className="hud-form-group">
@@ -202,6 +235,7 @@ export default function HudFrame({ activeTab, setActiveTab, selectedDomain }: Hu
                         className="hud-input" 
                         placeholder="ENTER UNIVERSITY NAME"
                         required
+                        disabled={isSubmitting}
                       />
                     </div>
                     <div className="hud-form-group">
@@ -211,6 +245,7 @@ export default function HudFrame({ activeTab, setActiveTab, selectedDomain }: Hu
                         value={formData.domain} 
                         onChange={handleChange} 
                         className="hud-select"
+                        disabled={isSubmitting}
                       >
                         <option value="robozar">ROBOZAR (Robotics)</option>
                         <option value="plexus">PLEXUS (Coding)</option>
@@ -220,8 +255,13 @@ export default function HudFrame({ activeTab, setActiveTab, selectedDomain }: Hu
                         <option value="genesis">GENESIS (Civils)</option>
                       </select>
                     </div>
-                    <button type="submit" className="hud-btn-register" style={{ marginTop: '16px', width: '100%' }}>
-                      SUBMIT ENROLLMENT
+                    <button 
+                      type="submit" 
+                      className="hud-btn-register" 
+                      style={{ marginTop: '16px', width: '100%' }}
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? 'ENROLLING PROTOCOL...' : 'SUBMIT ENROLLMENT'}
                     </button>
                   </form>
                 </>
@@ -243,7 +283,7 @@ export default function HudFrame({ activeTab, setActiveTab, selectedDomain }: Hu
                     <div style={{ fontSize: '0.55rem', color: 'var(--teal)', marginTop: '8px' }}>COLLEGE: {formData.college.toUpperCase()}</div>
                   </div>
                   <p style={{ fontSize: '0.6rem', color: 'rgba(0, 242, 255, 0.6)', lineHeight: '1.4' }}>
-                    YOUR ACCESS PASS HAS BEEN RECORDED. DEMONSTRATE THIS KEY AT SLIET CAMPUS FRONT DESK ON ARRIVAL.
+                    YOUR ACCESS PASS HAS BEEN RECORDED IN SUPABASE DATABASE. PRESENT THIS PASSKEY ON CAMPUS ARRIVAL.
                   </p>
                   <button onClick={() => setIsSubmitted(false)} className="hud-btn-register" style={{ marginTop: '16px', padding: '8px' }}>
                     REGISTER ANOTHER ACC

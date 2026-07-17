@@ -361,11 +361,11 @@ html, body {
   transform: translateY(-2px);
 }
 
-/* Left Info Console */
+/* Left Info Console - MOVED UPWARDS TO BOTTOM: 140PX */
 .hud-info-console {
   position: fixed;
   left: 80px;
-  bottom: 80px;
+  bottom: 140px;
   width: 320px;
   max-height: 160px;
   overflow-y: auto;
