@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, useTexture } from '@react-three/drei';
 import { Vector3 } from 'three';
@@ -18,21 +18,13 @@ interface VisualSceneProps {
 // Camera transition controller
 function CameraController({ activeTab, controlsRef }: { activeTab: string; controlsRef: any }) {
   const { camera } = useThree();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   // Target positions and lookAt vectors based on active tab
   const posTarget = new Vector3();
   const lookTarget = new Vector3();
 
-  // Shift camera heights upward on mobile to center terminals perfectly inside the top transparent half (48vh viewport)
-  const heightOffset = isMobile ? 1.2 : 0;
+  // Since the canvas is sized to 42vh on mobile, the 3D monitor is naturally centered in its box (no heightOffset needed)
+  const heightOffset = 0;
 
   if (activeTab === 'home' || activeTab === 'register' || activeTab === 'faq') {
     posTarget.set(0, 1.6 + heightOffset, 1.8);
